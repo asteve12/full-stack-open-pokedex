@@ -15,4 +15,6 @@ jobs:
       - name: Run date and ls
         run: |
           date
-          ls
+      - name : print current directory
+        run: |
+           ls -l
