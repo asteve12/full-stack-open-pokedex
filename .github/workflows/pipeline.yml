@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
   simple_deployment_pipeline:
@@ -23,3 +26,14 @@ jobs:
         run: npm build
       - name: test app
         run: npm test
+      - name: Trigger deployment
+        if: ${{ github.event_name == 'push' }}
+        uses: sws2apps/render-deployment@main #consider using pin for dependabot auto update
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+          apiKey: ${{ secrets.RENDER_API_KEY }}
+          multipleDeployment: false
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          	GITHUB_TOKEN: ${{ secrets.TOKEN }}
